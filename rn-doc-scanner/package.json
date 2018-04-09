@@ -1,0 +1,16 @@
+{
+  "name": "rn-doc-scanner",
+  "version": "1.0.8",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Ray Arvin Rimorin",
+  "license": "ISC",
+  "nativePackage": true,
+  "dependencies": {
+    "react": "16.3.1",
+    "react-native": "0.55.1"
+  }
+}
