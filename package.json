@@ -1,6 +1,6 @@
 {
   "name": "rn-doc-scanner",
-  "version": "1.0.8",
+  "version": "1.0.9",
   "description": "",
   "main": "index.js",
   "scripts": {
@@ -9,7 +9,7 @@
   "author": "Ray Arvin Rimorin",
   "license": "ISC",
   "nativePackage": true,
-  "dependencies": {
+  "peerDependencies": {
     "react": "16.3.1",
     "react-native": "0.55.1"
   }
