@@ -1,5 +1,0 @@
-rootProject.name = 'RNDocumentScannerExample'
-include ':rn-doc-scanner'
-project(':rn-doc-scanner').projectDir = new File(rootProject.projectDir, '../node_modules/rn-doc-scanner/android')
-
-include ':app'
