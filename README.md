@@ -12,7 +12,7 @@ or delete node_modules folder
 ```bash
 create-react-native-app rndocscannerExample
 cd rndocscannerExample
-yarn add https://avwave@bitbucket.org/avwave/rn-doc-scanner-android.git
+yarn add https://github.com/Diastorm/rn-doc-scanner-android.git
 yarn eject
 ```
 
