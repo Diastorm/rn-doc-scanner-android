@@ -101,17 +101,31 @@ public class RNDocScannerModule extends ReactContextBaseJavaModule {
         CVScanner.startManualCropper(getCurrentActivity(), currentPhotoUri, REQ_CROP_IMAGE);
     }
 
-    void startCameraIntent(){
+    void startCameraIntent() {
         if(Build.VERSION.SDK_INT < Build.VERSION_CODES.M ||
-                PermissionChecker.checkSelfPermission(getCurrentActivity(), Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
+                (   PermissionChecker.checkSelfPermission(getCurrentActivity(), Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED &&
+                    PermissionChecker.checkSelfPermission(getCurrentActivity(), Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED    )
+        ) {
             try {
                 currentPhotoUri = CVScanner.startCameraIntent(getCurrentActivity(), REQUEST_TAKE_PHOTO);
             } catch (IOException e) {
                 e.printStackTrace();
             }
         }
-        else{
-            ActivityCompat.requestPermissions(getCurrentActivity(), new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, REQ_PERMISSIONS);
+        else {
+            if (PermissionChecker.checkSelfPermission(getCurrentActivity(), Manifest.permission.CAMERA)
+                    != PackageManager.PERMISSION_GRANTED && PermissionChecker.checkSelfPermission(getCurrentActivity(), Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                    != PackageManager.PERMISSION_GRANTED) {
+                ActivityCompat.requestPermissions(getCurrentActivity(), new String[]{Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE}, REQ_PERMISSIONS);
+            }
+            if (PermissionChecker.checkSelfPermission(getCurrentActivity(), Manifest.permission.CAMERA)
+                    != PackageManager.PERMISSION_GRANTED) {
+                ActivityCompat.requestPermissions(getCurrentActivity(), new String[]{Manifest.permission.CAMERA}, REQ_PERMISSIONS);
+            }
+            if (PermissionChecker.checkSelfPermission(getCurrentActivity(), Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                    != PackageManager.PERMISSION_GRANTED) {
+                ActivityCompat.requestPermissions(getCurrentActivity(), new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, REQ_PERMISSIONS);
+            }
         }
     }
 
