@@ -8,6 +8,8 @@ import android.Manifest;
 import android.app.Activity;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Build;
 import android.support.annotation.NonNull;
@@ -24,6 +26,7 @@ import com.facebook.react.bridge.Callback;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 
 
 import devliving.online.cvscanner.CVScanner;
@@ -63,8 +66,13 @@ public class RNDocScannerModule extends ReactContextBaseJavaModule {
                                 String path = data.getStringExtra(CVScanner.RESULT_IMAGE_PATH);
                                 File file = new File(path);
                                 Uri imageUri = Util.getUriForFile(reactContext, file);
+
+                                final InputStream imageStream = getContentResolver().openInputStream(imageUri);
+                                final Bitmap selectedImage = BitmapFactory.decodeStream(imageStream);
+                                String encodedImage = encodeImage(selectedImage);
+
                                 if (imageUri != null) {
-                                    mPromise.resolve(imageUri.toString());
+                                    mPromise.resolve(encodedImage);
                                 }
                             }
                             mPromise = null;
