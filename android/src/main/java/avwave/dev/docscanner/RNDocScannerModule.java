@@ -60,6 +60,15 @@ public class RNDocScannerModule extends ReactContextBaseJavaModule {
 
 
     private final BaseActivityEventListener mActivityEventListener = new BaseActivityEventListener() {
+        private String encodeImage(Bitmap bm) {
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            bm.compress(Bitmap.CompressFormat.JPEG,100,baos);
+            byte[] b = baos.toByteArray();
+            String encImage = Base64.encodeToString(b, Base64.DEFAULT);
+
+            return encImage;
+        }
+
         @Override
         public void onActivityResult(Activity activity, int requestCode, int resultCode, Intent data) {
             if (resultCode == RESULT_OK) {
@@ -72,12 +81,15 @@ public class RNDocScannerModule extends ReactContextBaseJavaModule {
                                 File file = new File(path);
                                 Uri imageUri = Util.getUriForFile(reactContext, file);
 
-                                final InputStream imageStream = getContentResolver().openInputStream(imageUri);
-                                final Bitmap selectedImage = BitmapFactory.decodeStream(imageStream);
-                                String encodedImage = this.encodeImage(selectedImage);
-
-                                if (imageUri != null) {
-                                    mPromise.resolve(encodedImage);
+                                try {
+                                    final InputStream imageStream = activity.getContentResolver().openInputStream(imageUri);
+                                    final Bitmap selectedImage = BitmapFactory.decodeStream(imageStream);
+                                    String encodedImage = this.encodeImage(selectedImage);
+                                    if (imageUri != null) {
+                                        mPromise.resolve(encodedImage);
+                                    }
+                                }
+                                catch(FileNotFoundException e) {
                                 }
                             }
                             mPromise = null;
@@ -96,23 +108,6 @@ public class RNDocScannerModule extends ReactContextBaseJavaModule {
                     }
                 }
             }
-        }
-
-        private String encodeImage(String path) {
-            File imagefile = new File(path);
-            FileInputStream fis = null;
-            try{
-                fis = new FileInputStream(imagefile);
-            }catch(FileNotFoundException e){
-                e.printStackTrace();
-            }
-            Bitmap bm = BitmapFactory.decodeStream(fis);
-            ByteArrayOutputStream baos = new ByteArrayOutputStream();
-            bm.compress(Bitmap.CompressFormat.JPEG,100,baos);
-            byte[] b = baos.toByteArray();
-            String encImage = Base64.encodeToString(b, Base64.DEFAULT);
-            return encImage;
-
         }
     };
 
