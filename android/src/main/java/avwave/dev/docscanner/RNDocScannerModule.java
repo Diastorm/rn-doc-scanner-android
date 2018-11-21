@@ -15,6 +15,7 @@ import android.os.Build;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.PermissionChecker;
+import android.util.Base64;
 import android.util.Log;
 
 import com.facebook.react.bridge.BaseActivityEventListener;
@@ -24,7 +25,10 @@ import com.facebook.react.bridge.ReactContextBaseJavaModule;
 import com.facebook.react.bridge.ReactMethod;
 import com.facebook.react.bridge.Callback;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 
@@ -54,6 +58,7 @@ public class RNDocScannerModule extends ReactContextBaseJavaModule {
 
     private Promise mPromise;
 
+
     private final BaseActivityEventListener mActivityEventListener = new BaseActivityEventListener() {
         @Override
         public void onActivityResult(Activity activity, int requestCode, int resultCode, Intent data) {
@@ -69,7 +74,7 @@ public class RNDocScannerModule extends ReactContextBaseJavaModule {
 
                                 final InputStream imageStream = getContentResolver().openInputStream(imageUri);
                                 final Bitmap selectedImage = BitmapFactory.decodeStream(imageStream);
-                                String encodedImage = encodeImage(selectedImage);
+                                String encodedImage = this.encodeImage(selectedImage);
 
                                 if (imageUri != null) {
                                     mPromise.resolve(encodedImage);
@@ -91,6 +96,23 @@ public class RNDocScannerModule extends ReactContextBaseJavaModule {
                     }
                 }
             }
+        }
+
+        private String encodeImage(String path) {
+            File imagefile = new File(path);
+            FileInputStream fis = null;
+            try{
+                fis = new FileInputStream(imagefile);
+            }catch(FileNotFoundException e){
+                e.printStackTrace();
+            }
+            Bitmap bm = BitmapFactory.decodeStream(fis);
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            bm.compress(Bitmap.CompressFormat.JPEG,100,baos);
+            byte[] b = baos.toByteArray();
+            String encImage = Base64.encodeToString(b, Base64.DEFAULT);
+            return encImage;
+
         }
     };
 
